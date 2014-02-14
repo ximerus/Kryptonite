@@ -1,0 +1,516 @@
+
+;-------------------------------------------------------------------
+; KMemCrypter Stub BETA V1.0 (C) KOrUPt
+;	Stub file for KBC
+;
+;	Changelog:
+;		01/08/10:
+;			- Alpha > BETA
+;			- Reset version numbers; V1.0
+;			- Refactored code to nasm syntax
+;			- Added delta for global variable reference
+;			- Replaced internal LDE
+;			- Patched buggy bIsVinst global pointer reference passed to VM handler
+;-------------------------------------------------------------------
+
+[bits 32]
+section .text
+	global _main
+
+; ====================
+; SE handler torn from kmc_internal.exe
+;=====================
+SEH:
+  call _delta
+  _delta:
+  pop esi
+  sub esi, _delta
+  
+  PUSH EBP
+  MOV EBP,ESP
+  SUB ESP,0x20
+  MOV DWORD [EBP-4], 0x0400000
+  MOV BYTE [EBP-0x5],0xC3
+  MOV EAX,DWORD [EBP+0x8]
+  MOV ECX,DWORD [EAX+0xC]
+  MOV DWORD [EBP-0xC],ECX
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xC0]
+  OR AH,0x1
+  MOV ECX,DWORD [EBP+0x10]
+  MOV DWORD [ECX+0xC0],EAX
+  MOV EDX,DWORD [EBP+0x8]
+  CMP DWORD [EDX],0xCC
+  JNZ L026
+  MOV EAX,DWORD [EBP+0x10]
+  MOV ECX,DWORD [EAX+0xB8]
+  ADD ECX,0x2
+  MOV EDX,DWORD [EBP+0x10]
+  MOV DWORD [EDX+0xB8],ECX
+  
+  MOV DWORD [esi + nPrevInstructionLen],0x0
+  
+  MOV EAX,DWORD [EBP+0x10]
+  MOV DWORD [EAX+0xC0],0x0
+  XOR EAX,EAX
+  JMP L168
+L026:
+  MOV ECX,DWORD [EBP+0x8]
+  CMP DWORD [ECX],0x80000003
+  JNZ L034
+  MOV EDX,DWORD [EBP+0x8]
+  MOV EAX,DWORD [EDX+0xC]
+  MOV ECX,DWORD [esi + dwOpcode]
+  MOV DWORD [EAX],ECX
+  JMP L167
+L034:
+  MOV EDX,DWORD [EBP+0x8]
+  CMP DWORD [EDX],0x80000004
+  JNZ L165
+  MOV EAX,DWORD [EBP-0xC]
+  AND EAX,0xFFFF0000
+  MOV DWORD [EBP-0xC],EAX
+  CMP DWORD [EBP-0xC],0x0400000
+  JE L055
+  MOV ECX,DWORD [EBP+0x10]
+  MOV EDX,DWORD [ECX+0xC4]
+  MOV EAX,DWORD [EDX]
+  MOV DWORD [EBP-0x1C],EAX
+  MOV ECX,DWORD [EBP-0x1C]
+  MOV EDX,DWORD [ECX]
+  MOV DWORD [esi + dwOpcode],EDX
+  MOV EAX,DWORD [EBP-0x1C]
+  MOV DWORD [EAX],0xCC
+  MOV ECX,DWORD [EBP+0x10]
+  MOV DWORD [ECX+0xC0],0x0
+  XOR EAX,EAX
+  JMP L168
+L055:
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xB8]
+  XOR ECX,ECX
+  MOV CL,BYTE [EAX]
+  XOR ECX,0xC3
+  CMP ECX,0xE8
+  JNZ L073
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xB8]
+  ADD EAX,0x5
+  MOV DWORD [EBP-0x1C],EAX
+  MOV ECX,DWORD [EBP-0x1C]
+  MOV EDX,DWORD [ECX]
+  MOV DWORD [esi + dwOpcode],EDX
+  MOV EAX,DWORD [EBP-0x1C]
+  MOV DWORD [EAX],0xCC
+  MOV ECX,DWORD [EBP+0x10]
+  MOV DWORD [ECX+0xC0],0x0
+L073:
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xB8]
+  MOV DWORD [EBP-0x20],EAX
+  MOV DWORD [EBP-0x18],0x0
+  JMP L081
+L078:
+  MOV ECX,DWORD [EBP-0x18]
+  ADD ECX,0x1
+  MOV DWORD [EBP-0x18],ECX
+L081:
+  CMP DWORD [EBP-0x18],0x5
+  JGE L095
+  MOV EDX,DWORD [EBP-0x20]
+  ADD EDX,DWORD [EBP-0x18]
+  MOV EAX,DWORD [EBP-0x18]
+  MOV CL,BYTE [EDX]
+  MOV BYTE [EBP+EAX-0x14],CL
+  MOV EDX,DWORD [EBP-0x18]
+  XOR EAX,EAX
+  MOV AL,BYTE [EBP+EDX-0x14]
+  XOR EAX,0xC3
+  MOV ECX,DWORD [EBP-0x18]
+  MOV BYTE [EBP+ECX-0x14],AL
+  JMP L078
+L095:
+  CMP DWORD [esi + nPrevInstructionLen],0x0
+  JLE L119
+  MOV EDX,DWORD [esi + dwPrevInstructionAddr]
+  MOV DWORD [EBP-0x20],EDX
+  MOV EAX,DWORD [esi + nPrevInstructionLen]
+  MOV DWORD [EBP-0x18],EAX
+L101:
+  MOV ECX,DWORD [EBP-0x18]
+  MOV EDX,DWORD [EBP-0x18]
+  SUB EDX,0x1
+  MOV DWORD [EBP-0x18],EDX
+  TEST ECX,ECX
+  JE L116
+  MOV EAX,DWORD [EBP-0x20]
+  ADD EAX,DWORD [EBP-0x18]
+  XOR ECX,ECX
+  MOV CL,BYTE [EAX]
+  XOR ECX,0xC3
+  MOV EDX,DWORD [EBP-0x20]
+  ADD EDX,DWORD [EBP-0x18]
+  MOV BYTE [EDX],CL
+  JMP L101
+L116:
+  MOV EAX,DWORD [EBP+0x10]
+  MOV ECX,DWORD [EAX+0xB8]
+  MOV DWORD [EBP-0x20],ECX
+L119:
+  CMP DWORD [esi + bIsVinst],0x0
+  JE L124
+  MOV EDX,DWORD [esi + dwPrevInstructionAddr]
+  MOV AL,BYTE [esi + dwOpcode]
+  MOV BYTE [EDX],AL
+L124:
+  MOV ECX,DWORD [EBP+0x10]
+  PUSH ECX
+  
+  LEA ECX, [esi + bIsVinst] ; +
+  PUSH ECX ;PUSH 0x0401CB8
+  LEA EDX, [EBP-0x14] ; modified
+  
+  PUSH EDX
+  CALL L171 ; call VM(bOpcodeStore, &bIsVinst, ContextRecord);
+  ADD ESP,0xC
+  MOV DWORD [EBP-0x18],EAX
+  MOV EAX,DWORD [EBP-0x18]
+  MOV DWORD [esi + nPrevInstructionLen],EAX
+  MOV ECX,DWORD [EBP+0x10]
+  MOV EDX,DWORD [ECX+0xB8]
+  MOV DWORD [esi + dwPrevInstructionAddr],EDX
+  CMP DWORD [esi + bIsVinst],0x0
+  JE L150
+  MOV EAX,DWORD [EBP+0x10]
+  MOV ECX,DWORD [EAX+0xB8]
+  XOR EDX,EDX
+  MOV DL,BYTE [ECX]
+  MOV DWORD [esi + dwOpcode],EDX
+  MOV EAX,DWORD [EBP+0x10]
+  MOV ECX,DWORD [EAX+0xB8]
+  MOV BYTE [ECX],0x90
+  MOV DWORD [esi + nPrevInstructionLen],0x0
+  XOR EAX,EAX
+  JMP L168
+L150:
+  MOV EDX,DWORD [EBP-0x18]
+  MOV EAX,DWORD [EBP-0x18]
+  SUB EAX,0x1
+  MOV DWORD [EBP-0x18],EAX
+  TEST EDX,EDX
+  JE L165
+  MOV ECX,DWORD [EBP-0x20]
+  ADD ECX,DWORD [EBP-0x18]
+  XOR EDX,EDX
+  MOV DL,BYTE [ECX]
+  XOR EDX,0xC3
+  MOV EAX,DWORD [EBP-0x20]
+  ADD EAX,DWORD [EBP-0x18]
+  MOV BYTE [EAX],DL
+  JMP L150
+L165:
+  XOR EAX,EAX
+  JMP L168
+L167:
+  JMP L073
+L168:
+  MOV ESP,EBP
+  POP EBP
+  RETN 
+
+; ====================
+; VM handler torn from kmc_internal.exe
+;=====================
+L171:
+  PUSH EBP
+  MOV EBP,ESP
+  SUB ESP,0x8
+  MOV DWORD [EBP-0x4],0x1
+  MOV DWORD [EBP-0x8],0x0
+  MOV EAX,DWORD [EBP+0xC]
+  MOV DWORD [EAX],0x0
+  MOV ECX,DWORD [EBP+0x8]
+  XOR EDX,EDX
+  MOV DL,BYTE [ECX]
+  CMP EDX,0x10
+  JL L190
+  MOV EAX,DWORD [EBP+0x8]
+  XOR ECX,ECX
+  MOV CL,BYTE [EAX]
+  CMP ECX,0x17
+  JG L190
+  MOV DWORD [EBP-0x8],0x1
+  JMP L201
+L190:
+  MOV EDX,DWORD [EBP+0x8]
+  XOR EAX,EAX
+  MOV AL,BYTE [EDX]
+  CMP EAX,0x20
+  JL L201
+  MOV ECX,DWORD [EBP+0x8]
+  XOR EDX,EDX
+  MOV DL,BYTE [ECX]
+  CMP EDX,0x27
+  JG L201
+  MOV DWORD [EBP-0x8],-0x1
+L201:
+  CMP DWORD [EBP-0x8],0x0
+  JE L302
+  MOV EAX,DWORD [EBP+0x8]
+  XOR ECX,ECX
+  MOV CL,BYTE [EAX]
+  AND ECX,0xF
+  TEST ECX,ECX
+  JNZ L215
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xB0]
+  ADD EAX,DWORD [EBP-0x8]
+  MOV ECX,DWORD [EBP+0x10]
+  MOV DWORD [ECX+0xB0],EAX
+  JMP L298
+L215:
+  MOV EDX,DWORD [EBP+0x8]
+  XOR EAX,EAX
+  MOV AL,BYTE [EDX]
+  AND EAX,0xF
+  CMP EAX,0x1
+  JNZ L227
+  MOV ECX,DWORD [EBP+0x10]
+  MOV EDX,DWORD [ECX+0xA4]
+  ADD EDX,DWORD [EBP-0x8]
+  MOV EAX,DWORD [EBP+0x10]
+  MOV DWORD [EAX+0xA4],EDX
+  JMP L298
+L227:
+  MOV ECX,DWORD [EBP+0x8]
+  XOR EDX,EDX
+  MOV DL,BYTE [ECX]
+  AND EDX,0xF
+  CMP EDX,0x2
+  JNZ L239
+  MOV EAX,DWORD [EBP+0x10]
+  MOV ECX,DWORD [EAX+0xAC]
+  ADD ECX,DWORD [EBP-0x8]
+  MOV EDX,DWORD [EBP+0x10]
+  MOV DWORD [EDX+0xAC],ECX
+  JMP L298
+L239:
+  MOV EAX,DWORD [EBP+0x8]
+  XOR ECX,ECX
+  MOV CL,BYTE [EAX]
+  AND ECX,0xF
+  CMP ECX,0x3
+  JNZ L251
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xA0]
+  ADD EAX,DWORD [EBP-0x8]
+  MOV ECX,DWORD [EBP+0x10]
+  MOV DWORD [ECX+0xA0],EAX
+  JMP L298
+L251:
+  MOV EDX,DWORD [EBP+0x8]
+  XOR EAX,EAX
+  MOV AL,BYTE [EDX]
+  AND EAX,0xF
+  CMP EAX,0x4
+  JNZ L263
+  MOV ECX,DWORD [EBP+0x10]
+  MOV EDX,DWORD [ECX+0x9C]
+  ADD EDX,DWORD [EBP-0x8]
+  MOV EAX,DWORD [EBP+0x10]
+  MOV DWORD [EAX+0x9C],EDX
+  JMP L298
+L263:
+  MOV ECX,DWORD [EBP+0x8]
+  XOR EDX,EDX
+  MOV DL,BYTE [ECX]
+  AND EDX,0xF
+  CMP EDX,0x5
+  JNZ L275
+  MOV EAX,DWORD [EBP+0x10]
+  MOV ECX,DWORD [EAX+0xA8]
+  ADD ECX,DWORD [EBP-0x8]
+  MOV EDX,DWORD [EBP+0x10]
+  MOV DWORD [EDX+0xA8],ECX
+  JMP L298
+L275:
+  MOV EAX,DWORD [EBP+0x8]
+  XOR ECX,ECX
+  MOV CL,BYTE [EAX]
+  AND ECX,0xF
+  CMP ECX,0x6
+  JNZ L287
+  MOV EDX,DWORD [EBP+0x10]
+  MOV EAX,DWORD [EDX+0xC4]
+  ADD EAX,DWORD [EBP-0x8]
+  MOV ECX,DWORD [EBP+0x10]
+  MOV DWORD [ECX+0xC4],EAX
+  JMP L298
+L287:
+  MOV EDX,DWORD [EBP+0x8]
+  XOR EAX,EAX
+  MOV AL,BYTE [EDX]
+  AND EAX,0xF
+  CMP EAX,0x7
+  JNZ L298
+  MOV ECX,DWORD [EBP+0x10]
+  MOV EDX,DWORD [ECX+0xB4]
+  ADD EDX,DWORD [EBP-0x8]
+  MOV EAX,DWORD [EBP+0x10]
+  MOV DWORD [EAX+0xB4],EDX
+L298:
+  MOV ECX,DWORD [EBP+0xC]
+  MOV DWORD [ECX],0x1
+  MOV EAX,0x1
+  JMP L316
+L302:
+  MOV EDX,DWORD [EBP+0x8]
+  XOR EAX,EAX
+  MOV AL,BYTE [EDX]
+  CMP EAX,0xAA
+  JNZ L310
+  MOV ECX,DWORD [EBP+0xC]
+  MOV DWORD [ECX],0x1
+  JMP L315
+L310:
+  MOV EDX,DWORD [EBP+0x8]
+  PUSH EDX
+  CALL LDEX86
+  ;ADD ESP,0x4
+  MOV DWORD [EBP-0x4],EAX
+L315:
+  MOV EAX,DWORD [EBP-0x4]
+L316:
+  MOV ESP,EBP
+  POP EBP
+  RETN 
+
+
+; ====================
+; LDE torn from Target_vm.exe
+;=====================
+LDEX86:
+ db 0C8h, 008h, 000h, 000h, 060h, 0E9h, 07Bh, 001h
+ db 000h, 000h, 058h, 089h, 045h, 0F8h, 033h, 0C0h
+ db 089h, 045h, 0FCh, 08Bh, 075h, 008h, 033h, 0FFh
+ db 033h, 0D2h, 08Ah, 00Eh, 033h, 0C0h, 08Ah, 0C1h
+ db 08Bh, 05Dh, 0F8h, 08Ah, 01Ch, 018h, 080h, 0FBh
+ db 020h, 075h, 01Ch, 080h, 0F9h, 066h, 075h, 005h
+ db 0BFh, 001h, 000h, 000h, 000h, 080h, 0F9h, 067h
+ db 075h, 007h, 0C7h, 045h, 0FCh, 001h, 000h, 000h
+ db 000h, 042h, 046h, 08Ah, 00Eh, 0EBh, 0D5h, 033h
+ db 0C0h, 080h, 0F9h, 0F6h, 08Ah, 0C1h, 08Bh, 05Dh
+ db 0F8h, 08Ah, 004h, 018h, 074h, 005h, 080h, 0F9h
+ db 0F7h, 075h, 00Ah, 08Ah, 04Eh, 001h, 0F6h, 0C1h
+ db 038h, 074h, 002h, 0B0h, 002h, 085h, 0FFh, 074h
+ db 008h, 0A8h, 010h, 074h, 004h, 024h, 0EFh, 00Ch
+ db 008h, 08Bh, 04Dh, 0FCh, 085h, 0C9h, 074h, 00Ah
+ db 0A8h, 080h, 075h, 006h, 024h, 0EFh, 024h, 0FBh
+ db 00Ch, 008h, 0A8h, 080h, 074h, 002h, 024h, 07Fh
+ db 03Ch, 040h, 075h, 012h, 042h, 046h, 033h, 0C0h
+ db 08Ah, 006h, 08Bh, 05Dh, 0F8h, 081h, 0C3h, 000h
+ db 001h, 000h, 000h, 08Ah, 004h, 018h, 042h, 0A8h
+ db 002h, 00Fh, 084h, 0B8h, 000h, 000h, 000h, 042h
+ db 046h, 08Ah, 00Eh, 08Bh, 0F9h, 081h, 0E7h, 0FFh
+ db 000h, 000h, 000h, 08Bh, 0DFh, 0C1h, 0FBh, 006h
+ db 084h, 0DBh, 075h, 00Bh, 083h, 0E7h, 007h, 083h
+ db 0FFh, 005h, 075h, 003h, 083h, 0C2h, 004h, 033h
+ db 0DBh, 08Ah, 0D9h, 08Bh, 0FBh, 0C1h, 0FFh, 006h
+ db 083h, 0FFh, 003h, 074h, 058h, 083h, 0E3h, 007h
+ db 083h, 0FBh, 004h, 075h, 050h, 042h, 046h, 08Ah
+ db 01Eh, 088h, 05Dh, 0FBh, 033h, 0DBh, 08Ah, 0D9h
+ db 08Bh, 0F3h, 0C1h, 0FEh, 006h, 04Eh, 075h, 009h
+ db 083h, 0E3h, 007h, 083h, 0FBh, 004h, 075h, 001h
+ db 042h, 033h, 0DBh, 08Ah, 0D9h, 08Bh, 0F3h, 0C1h
+ db 0FEh, 006h, 083h, 0FEh, 002h, 075h, 00Bh, 083h
+ db 0E3h, 007h, 083h, 0FBh, 004h, 075h, 003h, 083h
+ db 0C2h, 004h, 033h, 0DBh, 08Ah, 0D9h, 0C1h, 0FBh
+ db 006h, 084h, 0DBh, 075h, 010h, 033h, 0DBh, 08Ah
+ db 05Dh, 0FBh, 083h, 0E3h, 007h, 083h, 0FBh, 005h
+ db 075h, 003h, 083h, 0C2h, 004h, 080h, 0F9h, 040h
+ db 072h, 012h, 080h, 0F9h, 07Fh, 077h, 00Dh, 033h
+ db 0DBh, 08Ah, 0D9h, 083h, 0E3h, 007h, 083h, 0FBh
+ db 004h, 074h, 001h, 042h, 080h, 0F9h, 080h, 072h
+ db 016h, 080h, 0F9h, 0BFh, 077h, 011h, 081h, 0E1h
+ db 0FFh, 000h, 000h, 000h, 083h, 0E1h, 007h, 083h
+ db 0F9h, 004h, 074h, 003h, 083h, 0C2h, 004h, 08Bh
+ db 0C8h, 0F6h, 0C1h, 010h, 074h, 003h, 083h, 0C2h
+ db 004h, 0F6h, 0C1h, 004h, 074h, 001h, 042h, 0F6h
+ db 0C1h, 008h, 074h, 003h, 083h, 0C2h, 002h, 084h
+ db 0C0h, 075h, 001h, 042h, 089h, 054h, 024h, 01Ch
+ db 061h, 0C9h, 0C2h, 004h, 000h, 0E8h, 080h, 0FEh
+ db 0FFh, 0FFh, 002h, 002h, 002h, 002h, 004h, 010h
+ db 001h, 001h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 001h, 040h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 001h, 001h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 001h, 001h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 020h, 001h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 020h, 001h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 020h, 001h, 002h, 002h, 002h, 002h, 004h, 010h
+ db 020h, 001h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 001h, 001h, 002h, 002h, 020h, 020h
+ db 020h, 020h, 010h, 012h, 004h, 006h, 001h, 001h
+ db 001h, 001h, 084h, 084h, 084h, 084h, 084h, 084h
+ db 084h, 084h, 084h, 084h, 084h, 084h, 084h, 084h
+ db 084h, 084h, 006h, 012h, 006h, 006h, 002h, 002h
+ db 002h, 002h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 001h, 001h, 018h, 001h, 001h, 001h
+ db 001h, 001h, 010h, 010h, 010h, 010h, 001h, 001h
+ db 001h, 001h, 004h, 010h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 004h, 004h, 004h, 004h, 004h, 004h
+ db 004h, 004h, 010h, 010h, 010h, 010h, 010h, 010h
+ db 010h, 010h, 006h, 006h, 008h, 001h, 002h, 002h
+ db 006h, 012h, 00Ch, 001h, 008h, 001h, 001h, 004h
+ db 001h, 001h, 002h, 002h, 002h, 002h, 004h, 004h
+ db 001h, 001h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 084h, 084h, 084h, 084h, 004h, 004h
+ db 004h, 004h, 090h, 090h, 018h, 004h, 001h, 001h
+ db 001h, 001h, 020h, 001h, 020h, 020h, 001h, 001h
+ db 006h, 012h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 002h, 002h, 002h, 002h, 002h, 002h, 000h, 000h
+ db 001h, 000h, 001h, 001h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 002h, 002h, 002h, 002h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 001h, 001h, 001h, 001h, 001h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 010h, 010h, 010h, 010h, 010h, 010h
+ db 010h, 010h, 010h, 010h, 010h, 010h, 010h, 010h
+ db 010h, 010h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 001h, 001h, 001h, 002h, 006h, 002h
+ db 000h, 000h, 001h, 001h, 001h, 002h, 006h, 002h
+ db 000h, 002h, 002h, 002h, 002h, 002h, 002h, 002h
+ db 002h, 002h, 000h, 000h, 006h, 002h, 002h, 002h
+ db 002h, 002h, 002h, 002h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 001h, 001h, 001h, 001h, 001h, 001h
+ db 001h, 001h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h, 000h, 000h, 000h, 000h, 000h, 000h
+ db 000h, 000h
+ 
+; globals
+	dwPrevInstructionAddr:  dd(0x00000000) ; -
+	db(0x00)
+	nPrevInstructionLen:	dd(0x00000000) ; -
+	db(0x00)
+	dwOpcode:				dd(0x00000000) ; -
+	db(0x00)
+	bIsVinst:				dd(0x00000000) ; -
+	db(0x00)

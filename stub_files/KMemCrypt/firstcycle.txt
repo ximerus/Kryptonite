@@ -1,0 +1,109 @@
+Setting environment for using Microsoft Visual C++ tools.
+kmc_encrypt_mem.cpp
+Setting environment for using Microsoft Visual C++ tools.
+kmc_stub.cpp
+
+P:\Development\Kryptonite\stub_files\KMemCrypt>kmc_encrypt_mem.exe kmc_stub.exe
+
+[*] KMC: Encrypting 110 bytes(pcode block 1)
+[+] KMC: Found VM signature for pcode block 1
+near je
+near jmp
+near je
+near jmp
+near jnz
+near jmp
+near jnz
+near je
+near jmp
+
+
+[*] KMC: Encrypted 1 pcode blocks(110 bytes)
+[*] KMC: Virtualized 24 instructions
+[+] KMC:  Success! File crypted!
+
+P:\Development\Kryptonite\stub_files\KMemCrypt>kmc_stub.exe
+In main()
+------------- [0] PCODE START
+------------- eip: 0x004044DD(x86): 90
+------------- eip: 0x004044DE(x86): 90
+------------- eip: 0x004044DF(x86): 90
+------------- [0] Using VM for this block
+------------- eip: 0x004044E0(vm): AA BB CC DD
+------------- Current EIP: 0x004044E0 (AA)
+------------- Instruction length: 4
+------------- New EIP: 0x004044E4 (8B)
+------------- [0] VInstruction breakpoint set @ 0x004044E4
+------------- [0] VInstruction breakpoint removed @ 0x004044E4
+------------- eip: 0x004044E4(x86): 8B 45 F4
+x86 emu : vmov
+------------- eip: 0x004044E7(vm): A8 D8
+------------- Current EIP: 0x004044E7 (A8)
+------------- Instruction length: 2
+------------- New EIP: 0x004044E9 (83)
+------------- [0] VInstruction breakpoint set @ 0x004044E9
+------------- [0] VInstruction breakpoint removed @ 0x004044E9
+------------- eip: 0x004044E9(x86): 83 C3 02
+x86 emu : vpush
+------------- eip: 0x004044EC(vm): 73
+------------- Current EIP: 0x004044EC (73)
+------------- Instruction length: 1
+------------- New EIP: 0x004044ED (82)
+------------- [0] VInstruction breakpoint set @ 0x004044ED
+------------- [0] VInstruction breakpoint removed @ 0x004044ED
+x86 emu : vncall
+------------- eip: 0x004044ED(vm): 82 25 CF DF EF
+------------- Current EIP: 0x004044ED (82)
+------------- Instruction length: 5
+------------- New EIP: 0x004044F2 (83)
+------------- [0] VInstruction breakpoint set @ 0x004044F2
+------------- [0] VInstruction breakpoint removed @ 0x004044F2
+------------- eip: 0x004044F2(x86): 83 F8 06
+x86 emu : vn je
+------------- eip: 0x004044F5(vm): 54 12
+------------- Current EIP: 0x004044F5 (54)
+------------- Instruction length: 2
+------------- New EIP: 0x004044F7 (E8)
+------------- [0] VInstruction breakpoint set @ 0x004044F7
+------------- [0] VInstruction breakpoint removed @ 0x004044F7
+x86 emu : vnjmp
+jumping to 00404531
+------------- eip: 0x004044F7(vm): E8 28
+------------- Current EIP: 0x004044F7 (E8)
+------------- Instruction length: 2
+------------- JMP EIP: 0x00404531 (8B)
+------------- [0] VInstruction breakpoint set @ 0x00404531
+------------- [0] VInstruction breakpoint removed @ 0x00404531
+------------- eip: 0x00404531(x86): 8B 45 F8
+x86 emu : vpush
+------------- eip: 0x00404534(vm): 70
+------------- Current EIP: 0x00404534 (70)
+------------- Instruction length: 1
+------------- New EIP: 0x00404535 (82)
+------------- [0] VInstruction breakpoint set @ 0x00404535
+------------- [0] VInstruction breakpoint removed @ 0x00404535
+x86 emu : vncall
+------------- eip: 0x00404535(vm): 82 5D CF DF EF
+------------- Current EIP: 0x00404535 (82)
+------------- Instruction length: 5
+------------- New EIP: 0x0040453A (83)
+------------- [0] VInstruction breakpoint set @ 0x0040453A
+
+
+--------------------
+Next cycle:
+--------------------
+
+------------- [0] VInstruction breakpoint removed @ 0x0040453A
+------------- eip: 0x0040453A(x86): 83 F8 06
+x86 emu : vn je
+jumping to 004045E4
+------------- eip: 0x0040453D(vm): 54 B5
+------------- Current EIP: 0x0040453D (54)
+------------- Instruction length: 2
+------------- JMP EIP: 0x004045E4 (B6)
+------------- [0] VInstruction breakpoint set @ 0x004045E4
+------------- [0] VInstruction breakpoint removed @ 0x004045E4
+------------- eip: 0x004045E4(x86): B6 CF
+------------- eip: 0x004045E6(x86): AB 5D 85 83 C3
+------------- [0] API breakpoint set @ 0x0012FC30
